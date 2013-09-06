@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Dugout::VERSION
   spec.authors       = ["Joe Fredette"]
   spec.email         = ["jfredett@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{A performance testing tool}
+  spec.summary       = %q{A performance testing tool, a la minitest/benchmark, but with more robust fitting and analysis}
   spec.homepage      = ""
   spec.license       = "MIT"
 
