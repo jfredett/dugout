@@ -1,5 +1,4 @@
-require "dugout/version"
+require 'dugout/version'
+require 'dugout/math'
 
-module Dugout
-  # Your code goes here...
-end
+module Dugout; end
