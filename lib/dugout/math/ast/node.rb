@@ -11,11 +11,11 @@ module Dugout
         end
 
         def /(other)
-          Multiply.new(self, Power.new(other, Coefficient.new(-1)))
+          Multiply.new(self, Power.new(other, Literal.new(-1)))
         end
 
         def -(other)
-          Add.new(self, Multiply.new(Coefficient.new(-1), other))
+          Add.new(self, Multiply.new(Literal.new(-1), other))
         end
 
         def **(other)

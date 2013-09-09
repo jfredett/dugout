@@ -12,7 +12,7 @@ module Dugout
 
       def with_respect_to(*syms)
         @vars = syms.map { |sym| Var.new(sym) }
-        self.result
+        self
       end
 
       def result
@@ -39,7 +39,7 @@ module Dugout
       end
 
       def log(node)
-        (1 / node.value) * derivative_of(node.value)
+        (Literal.new(1) / node.value) * derivative_of(node.value)
       end
 
       def add(node)
@@ -51,13 +51,14 @@ module Dugout
       end
 
       def multiply(node)
-        (derivative_of(node) * right) + (left * derivative_of(node))
+        left, right = node.left, node.right
+
+        (derivative_of(left) * right) + (left * derivative_of(right))
       end
 
       def derivative_of(ast)
         ast.visit(self)
       end
-
     end
   end
 end
