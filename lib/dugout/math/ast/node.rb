@@ -26,9 +26,9 @@ module Dugout
           visitor.send(name, self)
         end
 
-        def arity; raise 'abstract'; end
-        def unary?; raise 'abstract'; end
-        def binary?; raise 'abstract'; end
+        def self.arity; raise 'abstract'; end
+        def self.unary?; raise 'abstract'; end
+        def self.binary?; raise 'abstract'; end
 
         def name
           self.class.name.split('::').last.downcase.to_sym
@@ -44,9 +44,9 @@ module Dugout
           @right = right
         end
 
-        def arity; 2; end
-        def unary?; false; end
-        def binary?; true; end
+        def self.arity; 2; end
+        def self.unary?; false; end
+        def self.binary?; true; end
 
         def to_s
           "(#{left.to_s} #{op} #{right.to_s})"
@@ -65,9 +65,9 @@ module Dugout
           @value = value
         end
 
-        def arity; 1; end
-        def unary?; true; end
-        def binary?; false; end
+        def self.arity; 1; end
+        def self.unary?; true; end
+        def self.binary?; false; end
 
         def to_s
           "#{op}#{value}"
