@@ -25,14 +25,16 @@
 * Simplifier (more for aesthetic output than computational reasons)
   - Computationally might be useful to mitigate unnecessary computation at the
     outset, benchmark to find out.
+  - We *might* need a more general 'Solver', which can deal with equational
+    reasoning/simlpification. Or at the very least we'll need a 'Vectorifier',
+    which converts from the equational representation to a vector of coefs.
 * Matrix Reducer/Inverter
 
 # Questions
 
 * How do we do the Matrix Reducer?
-  - bound to be some lit out there for it
-  - Maybe there is a CUDA binding
-  - or a NumRuby
+  - There is a "NMatrix" gem which can do inverses and dot products, which ought
+    to do it.
 * What about linearly dependent models?
   - would indicate the model is overspecified/certain bits unnecessary
   - will linear regression *notice* that?
