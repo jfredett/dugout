@@ -37,11 +37,15 @@ module Dugout
 
           operator 'exp'
 
-          display_function { "exp(# @returns {value})" }
+          display_function { "exp(#{value})" }
         end
 
         primitive_op :Log do
+          attribute :value
 
+          operator 'log'
+
+          display_function { "log(#{value})" }
         end
 
         derived_op :Subtraction do
@@ -72,8 +76,24 @@ module Dugout
             radicand ** (lit(1) / lit(2))
           end
 
-          display_function { "sqrt(# @returns {value})" }
+          display_function { "sqrt(#{value})" }
         end
       end
+
+      # @returns The set of all primitive ops defined by the grammar
+      def self.primitive_ops
+        Defn.children[Parser::PrimitiveOp]
+      end
+
+      # @returns The set of all derived ops defined by the grammar
+      def self.derived_ops
+        Defn.children[Parser::DerivedOp]
+      end
+
+      # @returns The set of all ops defined by the grammar
+      def self.ops
+        [ primitive_ops ] + [ derived_ops ]
+      end
+    end
   end
 end
