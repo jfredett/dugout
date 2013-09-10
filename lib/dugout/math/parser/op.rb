@@ -24,6 +24,10 @@ module Dugout
         # defaults to:
         # normal inspect, to_s
         terminal DisplayFunction
+
+        def attributes
+          children[Attribute]
+        end
       end
 
       class PrimitiveOp < Op
