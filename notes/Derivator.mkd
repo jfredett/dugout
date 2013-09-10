@@ -1,0 +1,103 @@
+# Premise
+
+Define a DSL for defining a math syntax-tree + parser elements, use that to
+maintain / add new operations for doing stuff with. Essentially a meta-language
+
+Ideally this will make it easy to implement the method-missing-based expression
+parser. Having each DSL element declaratively state "this is the operation to
+look for", "this is the arity it should have", etc should make it relatively
+automatable to generate these guys. The Derived/Primitive op stuff is also nice
+self-documentation. Makes everything more declarative (albeit at the cost of a
+bit more transformational stuff and some potential performance stuff, though I'm
+skeptical the perf will suffer, really)
+
+# Status
+
+* MetaDSL needs tests
+* Reifier needs to reify stuff
+* expression parser -> reified datamodel needs to be written
+
+# Simplificator
+
+I'll need a couple things for the simplificator.
+
+* An Expander
+* A Simplifier
+* A Metric of 'tension'
+
+The algorithm is simple, start with an expansion phase. Until the equation `e`'s
+'tension' stops increasing by some threshold (or some hard limit of iterations
+is reached), continually apply the 'expansion' algorithm. Then apply the
+simplification algorithm in the same fashion, noting the lowest point the
+tension reaches. Reduce the hard upper limit by half, repeat the whole process
+until the difference in minimum tensions changes by less than some threshold, or
+the hard limit of iterations is reached.
+
+## Expander and Simplifier Rules
+
+These could be stored in the DSL as well. Essentially a Rule is simply a
+transformation from one state to another, plus a notion of whether it will
+increase tension (ie, expand) or decrease it. It might look like:
+
+    rule "Collapse Constant Addition" do
+      type :simplification
+
+      match do
+        any(Literal) + any(Literal)
+      end
+
+      output do |x,y| #block arity must match how many any calls were made.
+        Literal(x.value + y.value)
+      end
+    end
+
+    rule "Zero Product Property" do
+      type :simplification
+
+      # multiple schemas = multiple match clauses
+      match do
+        Literal(0) * any #any, with no arguments, means anything
+      end
+
+      match do
+        any * Literal(0)
+      end
+
+      # parameters are optional in the output block
+      output do
+        Literal(0)
+      end
+    end
+
+    rule "Exponent Demotion" do
+      type :expansion
+
+      match do
+        any ** any(Literal)
+      end
+
+      output do |xpr, k|
+        [xpr].cycle.take(k.value).inject(:*)
+      end
+    end
+
+Would require an 'Any' construct in the main DSL, but ultimately it neatly
+decouples visitation phases, the visitor would simply iterate through each rule,
+check to see if the current part of the tree matches any of the match clauses,
+apply the output block function, and blammo, simplificated/expanderated
+
+You might also note if any of those rules are idempotent, those rules would
+never need to be run twice in a row, in that case.
+
+## Alternative Algorithmic approaches
+
+You might opt for a greedy approach, or greedy-with-lookahead. Most of the time
+that will find a good optima. Basically look through available transformations,
+see which one reduces the tension the most, and apply it. In the case of
+lookahead, with `k` lookahead look for combinations of `k` expanders and
+simiplifiers that reduce overall tension the most.
+
+You might even keep a cache of 'good' simplification functions you check first,
+and if any give you a good reduction, never bother to check the field (which for
+reasonably `k` would get large -- `O(|S|^k)` large -- where `|S|` is the number
+of simplifier/expanders you have.

@@ -1,0 +1,62 @@
+# Linear Regression
+
+1. User defines a model
+2. Calculate free variables in that model `M`, one must be `x`, a special variable
+   mapped to the sample parameter
+4. For each other free variable `v`
+  4.1. calculate the derivative `dR_i^2/dv = (y_i - M(a,b,c,...,v,x_i))^2`. -- where
+       a,b,c... are the other free variables.
+  4.2. calculate the sum `dR^2/dv` by taking the sum of `dR_i^2/dv`s at each
+       `(x_i, y_i)` experimental pair
+  4.3. from this derive an augmented matrix of the coefficients of each free
+       variable from the 4.2 calculations + the y_i's
+  4.4. solve this matrix
+  4.5. the resulting coefficients along the diagonal are the coefficients of the
+       best-fit model as defined by the user originally
+5. Benchmark-Test
+  5.1 Take the best-fit model `B(x_i)` from 4.5
+  5.2 Calculate R^2, the squared error, by taking the sum `y_i - B(x_i)`
+  5.3 Threshold check the error, if it passes, Benchmark passes.
+
+
+# What we need
+
+* Differentiator
+* Simplifier (more for aesthetic output than computational reasons)
+  - Computationally might be useful to mitigate unnecessary computation at the
+    outset, benchmark to find out.
+* Matrix Reducer/Inverter
+
+# Questions
+
+* How do we do the Matrix Reducer?
+  - bound to be some lit out there for it
+  - Maybe there is a CUDA binding
+  - or a NumRuby
+* What about linearly dependent models?
+  - would indicate the model is overspecified/certain bits unnecessary
+  - will linear regression *notice* that?
+* What about model discovery?
+  - still can fit a bunch of 'standard' models and see which has the least error
+    * Squared Error calculation is pretty easy.
+* Other error estimators?
+  - RMS?
+* Other useful metrics?
+  - Stddev / Mean Abs. Dev could tell us how reliable those performance metrics
+    are
+  - Mean/Median times per sample size also useful for at-a-glance understanding
+  - Confidence Intervals are very useful for detecting flaky benchmarks
+    * perhaps a 'run until confidence = blah' mode? (for CI, mostly)
+
+# Futurethink
+
+* Multiple Linear Regression models
+  - Roughly similar approach, may be useful for multi-parameter algorithmic
+    complexities
+  - What are some concrete use-cases?
+
+
+
+
+
+
