@@ -1,16 +1,29 @@
 require 'spec_helper'
 
+##
+# These tests are all a bit gross, since we're operating on meta-meta program.
+# This thing is testing the thing that will generate the code which will be used
+# to do derivatives. It's a mad mad mad world.
+#
 describe Dugout::Math::Model::PrimitiveOpCompiler do
+  let(:attributes) { [:left, :right] }
+
   let(:ast) {
     Dugout::Math::Model.model do
       primitive_op :Example do
-        attribute :left
-        attribute :right
-
-        operator '@'
       end
     end.children[Dugout::Math::Parser::PrimitiveOp].first
   }
+
+  before do
+    # after-the-fact setup makes it easier to decouple what attrs I'm defining
+    attributes.each do |attr|
+      ast.attribute attr
+    end
+
+    ast.operator '@'
+  end
+
   subject(:primop) { Dugout::Math::Model::PrimitiveOpCompiler.new(ast, Dugout::Math::Model) }
 
   after { Dugout::Math::Model.send(:remove_const, :Example) rescue nil }
@@ -45,6 +58,17 @@ describe Dugout::Math::Model::PrimitiveOpCompiler do
       context 'instance' do
         subject(:example_op) { Dugout::Math::Model::Example.new(left, right) }
 
+        it 'defines a method for each attribute' do
+          attributes.each do |attr|
+            example_op.should respond_to attr
+          end
+        end
+
+        it 'assigns the attributes correctly in the initializer' do
+          attributes.each do |attr|
+            example_op.send(attr).should == send(attr)
+          end
+        end
       end
     end
   end
