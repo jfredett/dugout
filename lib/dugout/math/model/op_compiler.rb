@@ -4,7 +4,7 @@ module Dugout
       ##
       # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
       # the Model definition AST into a real expression-AST class
-      class PrimitiveOpCompiler
+      class OpCompiler
         ##
         # Create a new Unit-of-work style compiler for the given chunk of the
         # model-definition AST.
@@ -49,10 +49,22 @@ module Dugout
         ##
         # Custom iterator for dealing with attributes
         def each_attribute_by_name
-          attributes.each do |attr|
+          Array(attributes).each do |attr|
             yield attr.name, attr if block_given?
           end
         end
+      end
+
+      ##
+      # A Unit-of-work style class for turning a Parser::DerivedOp chunk of
+      # the Model definition AST into a real expression-AST class
+      class DerivedOpCompiler < OpCompiler
+      end
+
+      ##
+      # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
+      # the Model definition AST into a real expression-AST class
+      class PrimitiveOpCompiler < OpCompiler
       end
     end
   end
