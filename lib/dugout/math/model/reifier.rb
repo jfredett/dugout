@@ -24,22 +24,6 @@ module Dugout
           define_expression_parser!
         end
       end
-
-
-      class DerivedOpCompiler
-        attr_reader :location, :ast
-
-        def initialize(ast, location = Dugout::Math::Model)
-          @ast = ast
-          @location = location
-        end
-
-        def run!
-          location.const_set(ast.name, Class.new do
-
-          end)
-        end
-      end
     end
   end
 end
