@@ -1,83 +1,42 @@
 module Dugout
   module Math
     module Model
-      Defn = model do
-        primitive_op :Multiplication do
-          attribute :left
-          attribute :right
+      ##
+      # This is the model definition, however, it's loaded from other files in
+      # the dugout/math/model/ast directory, so this constant should _not_ be
+      # used in normal operation
+      Defn = model { }
 
-          operator '*'
-        end
+      ##
+      # Define a operator safely on the model, disallowing unknown op types.
+      #
+      # @param op_type [Symbol] the operator type to define
+      # @param name [Symbol] the name of the operator
+      # @param block [Proc] the definition of the operator
+      # @return [nil]
+      def self.define(op_type, name, &block)
+        raise ArgumentError unless [:primitive_op, :derived_op].include? op_type
+        Defn.send(op_type, name, &block)
+      end
 
-        primitive_op :Addition do
-          attribute :left
-          attribute :right
+      ##
+      # Define a primitive op safely on the model, disallowing unknown op types.
+      #
+      # @param name [Symbol] the name of the operator
+      # @param block [Proc] the definition of the operator
+      # @return [nil]
+      def self.define_primitive_op(name, &block)
+        define(:primitive_op, name, &block)
+      end
 
-          operator '+'
-        end
-
-        primitive_op :Variable do
-          attribute :name
-
-          operator 'var'
-
-          display_function { name }
-        end
-
-        primitive_op :Literal do
-          attribute :value
-
-          operator 'lit'
-
-          display_function { value }
-        end
-
-        primitive_op :Exponential do
-          attribute :value
-
-          operator 'exp'
-
-          display_function { "exp(#{value})" }
-        end
-
-        primitive_op :Log do
-          attribute :value
-
-          operator 'log'
-
-          display_function { "log(#{value})" }
-        end
-
-        derived_op :Subtraction do
-          attribute :left
-          attribute :right
-
-          operator '-'
-
-          implementation do
-            left + (lit(-1) * right)
-          end
-        end
-
-        derived_op :Power do
-          implementation do
-            exp(log(left) * right)
-          end
-
-          operator '**'
-        end
-
-        derived_op :Sqrt do
-          attribute :radicand
-
-          operator 'root'
-
-          implementation do
-            radicand ** (lit(1) / lit(2))
-          end
-
-          display_function { "sqrt(#{value})" }
-        end
+      ##
+      # Define a derived op safely on the model, disallowing unknown op types.
+      #
+      # @param name [Symbol] the name of the operator
+      # @param block [Proc] the definition of the operator
+      # @return [nil]
+      def self.define_derived_op(name, &block)
+        define(:derived_op, name, &block)
       end
 
       # @returns The set of all primitive ops defined by the grammar
