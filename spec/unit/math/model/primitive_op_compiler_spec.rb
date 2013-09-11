@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dugout::Math::Model::PrimitiveOpCreator do
+describe Dugout::Math::Model::PrimitiveOpCompiler do
   let(:ast) {
     Dugout::Math::Model.model do
       primitive_op :Example do
@@ -11,17 +11,17 @@ describe Dugout::Math::Model::PrimitiveOpCreator do
       end
     end.children[Dugout::Math::Parser::PrimitiveOp].first
   }
-  subject(:primop) { Dugout::Math::Model::PrimitiveOpCreator.new(ast, Dugout::Math::Model) }
+  subject(:primop) { Dugout::Math::Model::PrimitiveOpCompiler.new(ast, Dugout::Math::Model) }
 
   after { Dugout::Math::Model.send(:remove_const, :Example) rescue nil }
 
-  context 'before running the creator' do
+  context 'before running the compiler' do
     it "has not yet defined the operator in the namespace" do
       defined?(Dugout::Math::Model::Example).should_not be
     end
   end
 
-  context 'after running the creator' do
+  context 'after running the compiler' do
     before { primop.run! }
 
     it "has defines the operator in the namespace" do

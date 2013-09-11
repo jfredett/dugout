@@ -1,7 +1,7 @@
 module Dugout
   module Math
     module Model
-      class PrimitiveOpCreator
+      class PrimitiveOpCompiler
         attr_reader :location, :ast
 
         def initialize(ast, location = Dugout::Math::Model)
@@ -15,7 +15,7 @@ module Dugout
           creator = self
           location.const_get(ast.name).class_eval do
             define_method(:initialize) do |*args|
-              raise ArgumentError unless args.length == creator.ast.attributes.length
+              raise ArgumentError unless args.length == compiler.arity
             end
           end
         end

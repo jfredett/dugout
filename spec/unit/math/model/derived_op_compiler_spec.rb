@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Dugout::Math::Model::DerivedOpCreator do
+describe Dugout::Math::Model::DerivedOpCompiler do
   let(:ast) {
     Dugout::Math::Model.model do
       derived_op :Example do
@@ -15,17 +15,17 @@ describe Dugout::Math::Model::DerivedOpCreator do
       end
     end.children[Dugout::Math::Parser::DerivedOp].first
   }
-  subject(:derivedop) { Dugout::Math::Model::DerivedOpCreator.new(ast, Dugout::Math::Model) }
+  subject(:derivedop) { Dugout::Math::Model::DerivedOpCompiler.new(ast, Dugout::Math::Model) }
 
   after { Dugout::Math::Model.send(:remove_const, :Example) rescue nil }
 
-  context 'before running the creator' do
+  context 'before running the compiler' do
     it "has not yet defined the operator in the namespace" do
       defined?(Dugout::Math::Model::Example).should_not be
     end
   end
 
-  context 'after running the creator' do
+  context 'after running the compiler' do
     before { derivedop.run! }
 
     it "has defines the operator in the namespace" do

@@ -4,19 +4,29 @@ module Dugout
       module Reifier
         def self.define_primitive_ops!
           Dugout::Math::Model.primitive_ops.map do |op|
-            PrimitiveOpCreator.new(op).run!
+            PrimitiveOpCompiler.new(op).run!
           end
         end
 
         def self.define_derived_ops!
           Dugout::Math::Model.derived_ops.map do |op|
-            DerivedOpCreator.new(op).run!
+            DerivedOpCompiler.new(op).run!
           end
+        end
+
+        def self.define_expression_parser!
+        end
+
+        def self.compile!
+          define_primitive_ops!
+          define_derived_ops!
+
+          define_expression_parser!
         end
       end
 
 
-      class DerivedOpCreator
+      class DerivedOpCompiler
         attr_reader :location, :ast
 
         def initialize(ast, location = Dugout::Math::Model)
