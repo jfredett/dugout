@@ -50,6 +50,19 @@ module Dugout
           define_display_functions!
         end
 
+        ##
+        # The operator symbol for the op
+        #
+        # @return [String]
+        def operator
+          ast.children[Parser::Operator].name
+        end
+
+        ##
+        # The function the op specified to use to display it, or a default
+        # calculated based on the op's arity
+        #
+        # @return [Proc] a proc to be used as a display function
         def display_function
           if df = ast.children[Parser::DisplayFunction]
             df.block
@@ -58,6 +71,12 @@ module Dugout
           end
         end
 
+        private
+
+        ##
+        # Calculates the default display function to use when none is specified
+        #
+        # @return [Proc] a proc to be used as a display function
         def default_display_function
           _attributes = attributes
           if binary_op?
@@ -71,16 +90,12 @@ module Dugout
           end
         end
 
-
+        ##
+        # true if the op is binary, false otherwise
+        # @return [Boolean]
         def binary_op?
           arity == 2
         end
-
-        def operator
-          ast.children[Parser::Operator].name
-        end
-
-        private
 
         ##
         # Define the initializer on the compiled op's class
@@ -95,6 +110,8 @@ module Dugout
           end
         end
 
+        ##
+        # Define the #operator method on the compiled class
         def define_operator!
           define! do |compiler|
             define_method(:operator) do |*args|
@@ -113,6 +130,8 @@ module Dugout
           end
         end
 
+        ##
+        # Define #to_s and #inspect on the compiled class
         def define_display_functions!
           define! do |compiler|
             define_method(:to_s, &compiler.display_function)
@@ -120,6 +139,11 @@ module Dugout
           define! { alias inspect to_s }
         end
 
+        ##
+        # Define an arbitrary method on the compiled class.
+        #
+        # @param block [Proc] a proc of arity 0 or 1, if it takes a parameter,
+        #    it will be passed the OpCompiler instance.
         def define!(&block)
           op_class.class_exec(self, &block)
         end
