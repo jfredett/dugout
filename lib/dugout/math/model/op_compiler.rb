@@ -68,8 +68,7 @@ module Dugout
         ##
         # Define the initializer on the compiled op's class
         def define_initializer!
-          compiler = self
-          op_class.class_eval do
+          define! do |compiler|
             define_method(:initialize) do |*args|
               raise ArgumentError unless args.length == compiler.arity
               args.zip(compiler.attributes).each do |arg, attr|
@@ -80,8 +79,7 @@ module Dugout
         end
 
         def define_operator!
-          compiler = self
-          op_class.class_eval do
+          define! do |compiler|
             define_method(:operator) do |*args|
               compiler.operator
             end
@@ -91,8 +89,7 @@ module Dugout
         ##
         # Define each attribute's getter on the compiled op's class
         def define_attribute_getters!
-          compiler = self
-          op_class.class_eval do
+          define! do |compiler|
             compiler.each_attribute_by_name do |name|
               define_method(name) { instance_variable_get("@#{name}") }
             end
@@ -100,8 +97,7 @@ module Dugout
         end
 
         def define_display_functions!
-          compiler = self
-          op_class.class_eval do
+          define! do |compiler|
             if compiler.display_function
               define_method(:to_s, compiler.display_function)
             else
@@ -117,6 +113,10 @@ module Dugout
             end
             alias inspect to_s
           end
+        end
+
+        def define!(&block)
+          op_class.class_exec(self, &block)
         end
       end
 
