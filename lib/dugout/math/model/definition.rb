@@ -19,7 +19,7 @@ module Dugout
 
       # @returns The set of all ops defined by the grammar
       def self.ops
-        [ primitive_ops ] + [ derived_ops ]
+        primitive_ops + derived_ops
       end
 
       module AST
