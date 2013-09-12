@@ -11,6 +11,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
   end
 
   let(:attributes) { ('a'..'z').to_a.sample(rand(10) + 1) }
+  let(:op_operator) { '@' }
 
   # These dynamically construct the AST node we need to test against
   let(:dsl_namespace) { Dugout::Math::Model.model }
@@ -28,7 +29,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
       ast.attribute attr
     end
 
-    ast.operator '@'
+    ast.operator op_operator
   end
 
   subject(:op_compiler) { compiler_class.new(ast, test_namespace) }
@@ -40,36 +41,112 @@ shared_examples_for 'an op compiler for a' do |op_class|
   end
 
   context 'after running the compiler' do
-    before { op_compiler.run! }
+    describe 'general case' do
+      before { op_compiler.run! }
 
-    it "has defines the operator in the namespace" do
-      defined?(test_namespace::Example).should be
+      it_behaves_like 'a generated class'
     end
 
-    describe 'the created class' do
-      context 'class' do
-        subject(:example_op_class) { test_namespace::Example }
+    describe 'a binary op without a defined display function' do
+      # we need to override these to known values
+      let(:attributes) { [:left, :right] }
+      let(:left_val) { 1 }
+      let(:right_val) { 2 }
 
-        specify { expect { example_op_class.new(*attributes) }.to_not raise_error }
+      before { op_compiler.run! }
 
-        specify { expect { example_op_class.new(*attributes.drop(1) ) }.to raise_error ArgumentError }
+      it_behaves_like 'a generated class'
 
-        specify { expect { example_op_class.new(*attributes.push(nil)) }.to raise_error ArgumentError }
+      subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+
+      its(:to_s) { should == op_instance.inspect }
+      its(:inspect) { should ==  "(#{left_val} #{op_operator} #{right_val})" }
+    end
+
+    describe 'a unary op without a defined display function' do
+      # we need to override these to known values
+      let(:attributes) { [:only] }
+      let(:only_val) { 1 }
+
+      before { op_compiler.run! }
+
+      it_behaves_like 'a generated class'
+
+      subject(:op_instance) { test_namespace::Example.new(only_val) }
+
+      its(:to_s) { should == op_instance.inspect }
+      its(:inspect) { should ==  "#{op_operator}(#{only_val})" }
+    end
+
+    describe 'a n-ary op without a defined display function' do
+      # we need to override these to known values
+      let(:attributes) { [:left, :center, :right] }
+      let(:left_val) { 1 }
+      let(:right_val) { 2 }
+      let(:center_val) { 3 }
+
+      before { op_compiler.run! }
+
+      it_behaves_like 'a generated class'
+
+      subject(:op_instance) { test_namespace::Example.new(left_val, center_val, right_val) }
+
+      its(:to_s) { should == op_instance.inspect }
+      its(:inspect) { should ==  "#{op_operator}(#{left_val},#{center_val},#{right_val})" }
+    end
+
+    describe 'with a defined display function' do
+      # we need to override these to known values
+      let(:attributes) { [:left, :right] }
+      let(:left_val) { 1 }
+      let(:right_val) { 2 }
+
+      before do
+        ast.display_function { "Left: #{left}, Right: #{right}, Op: #{operator}" }
+        op_compiler.run!
       end
 
-      context 'instance' do
-        subject(:example_op) { test_namespace::Example.new(*attributes) }
+      it_behaves_like 'a generated class'
 
-        it 'defines a method for each attribute' do
-          attributes.each do |attr|
-            example_op.should respond_to attr
-          end
+      subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+
+      its(:to_s) { should == op_instance.inspect }
+      its(:inspect) { should ==  "Left: #{left_val}, Right: #{right_val}, Op: #{op_operator}" }
+    end
+  end
+end
+
+shared_examples_for 'a generated class' do
+  it "has defines the operator in the namespace" do
+    defined?(test_namespace::Example).should be
+  end
+
+  describe 'the created class' do
+    context 'class' do
+      subject(:example_op_class) { test_namespace::Example }
+
+      specify { expect { example_op_class.new(*attributes) }.to_not raise_error }
+
+      specify { expect { example_op_class.new(*attributes.drop(1) ) }.to raise_error ArgumentError }
+
+      specify { expect { example_op_class.new(*attributes.push(nil)) }.to raise_error ArgumentError }
+    end
+
+    context 'instance' do
+      subject(:example_op) { test_namespace::Example.new(*attributes) }
+
+      it { should respond_to :operator }
+      its(:operator) { should == op_operator }
+
+      it 'defines a method for each attribute' do
+        attributes.each do |attr|
+          example_op.should respond_to attr
         end
+      end
 
-        it 'assigns the attributes correctly in the initializer' do
-          attributes.each do |attr|
-            example_op.send(attr).should == attr
-          end
+      it 'assigns the attributes correctly in the initializer' do
+        attributes.each do |attr|
+          example_op.send(attr).should == attr
         end
       end
     end

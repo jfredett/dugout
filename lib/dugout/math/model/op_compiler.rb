@@ -46,6 +46,21 @@ module Dugout
         def run!
           define_initializer!
           define_attribute_getters!
+          define_operator!
+          define_display_functions!
+        end
+
+        def display_function
+          x = ast.children[Parser::DisplayFunction]
+          x.block unless x.nil?
+        end
+
+        def binary_op?
+          arity == 2
+        end
+
+        def operator
+          ast.children[Parser::Operator].name
         end
 
         private
@@ -64,6 +79,15 @@ module Dugout
           end
         end
 
+        def define_operator!
+          compiler = self
+          op_class.class_eval do
+            define_method(:operator) do |*args|
+              compiler.operator
+            end
+          end
+        end
+
         ##
         # Define each attribute's getter on the compiled op's class
         def define_attribute_getters!
@@ -72,6 +96,26 @@ module Dugout
             compiler.each_attribute_by_name do |name|
               define_method(name) { instance_variable_get("@#{name}") }
             end
+          end
+        end
+
+        def define_display_functions!
+          compiler = self
+          op_class.class_eval do
+            if compiler.display_function
+              define_method(:to_s, compiler.display_function)
+            else
+              if compiler.binary_op?
+                define_method(:to_s) do
+                  "(#{compiler.attributes.map { |i| send(i.name).to_s }.join(" #{operator} ")})"
+                end
+              else
+                define_method(:to_s) do
+                  "#{operator}(#{compiler.attributes.map { |i| send(i.name).to_s }.join(',')})"
+                end
+              end
+            end
+            alias inspect to_s
           end
         end
       end
