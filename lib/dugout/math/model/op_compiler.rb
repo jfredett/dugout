@@ -97,22 +97,27 @@ module Dugout
         end
 
         def define_display_functions!
-          define! do |compiler|
-            if compiler.display_function
+          if display_function
+            define! do |compiler|
               define_method(:to_s, compiler.display_function)
-            else
-              if compiler.binary_op?
+            end
+          else
+            if binary_op?
+              define! do |compiler|
                 define_method(:to_s) do
                   "(#{compiler.attributes.map { |i| send(i.name).to_s }.join(" #{operator} ")})"
                 end
-              else
+              end
+            else
+              define! do |compiler|
                 define_method(:to_s) do
                   "#{operator}(#{compiler.attributes.map { |i| send(i.name).to_s }.join(',')})"
                 end
               end
             end
-            alias inspect to_s
           end
+
+          define! { alias inspect to_s }
         end
 
         def define!(&block)
