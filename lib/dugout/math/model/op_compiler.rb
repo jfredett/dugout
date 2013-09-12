@@ -1,6 +1,8 @@
 module Dugout
   module Math
     module Model
+      module ExpressionLanguage ; end
+
       ##
       # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
       # the Model definition AST into a real expression-AST class
@@ -20,7 +22,7 @@ module Dugout
         #     the model
         # @param location [Module] The Module on-which to define the class.
         #     Primarily used for testing purposes.
-        def initialize(ast, location = Dugout::Math::Model)
+        def initialize(ast, location = Dugout::Math::Model::ExpressionLanguage)
           @ast = ast
           @location = location
         end
