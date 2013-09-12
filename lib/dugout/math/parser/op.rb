@@ -26,7 +26,7 @@ module Dugout
         terminal DisplayFunction
 
         def attributes
-          children[Attribute]
+          Array(children[Attribute])
         end
       end
 
