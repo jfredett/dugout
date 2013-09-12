@@ -51,8 +51,11 @@ module Dugout
         end
 
         def display_function
-          x = ast.children.fetch(Parser::DisplayFunction, default_display_function)
-          x.block unless x.nil?
+          if df = ast.children[Parser::DisplayFunction]
+            df.block
+          else
+            default_display_function
+          end
         end
 
         def default_display_function
