@@ -4,9 +4,9 @@ module Dugout
       module ExpressionEvaluator; end
 
       module Reifier
-        def self.define_ops!
-          Dugout::Math::Model.ops.map do |op|
-            OpCompiler.new(op).run!
+        def self.compile!
+          Dugout::Math::Model.ops.each do |op|
+            OpCompiler.new(op, ExpressionLanguage, ExpressionEvaluator).run!
           end
         end
 

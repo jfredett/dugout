@@ -27,6 +27,8 @@ describe Dugout::Math::Model::Reifier do
 
       its(:constants) { should =~ Dugout::Math::Model.ops.map(&:name) }
 
+      # TODO: Test creating expressions with the defined methods
+      # TODO: move expression parser defn into op_compiler
     end
   end
 end

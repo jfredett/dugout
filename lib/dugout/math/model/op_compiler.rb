@@ -7,7 +7,7 @@ module Dugout
       # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
       # the Model definition AST into a real expression-AST class
       class OpCompiler
-        attr_reader :location, :ast
+        attr_reader :ast
 
         extend Forwardable
 
@@ -20,11 +20,13 @@ module Dugout
         #
         # @param ast [Dugout::Math::Parser::PrimitiveOp] The AST to reify into
         #     the model
-        # @param location [Module] The Module on-which to define the class.
-        #     Primarily used for testing purposes.
-        def initialize(ast, location = Dugout::Math::Model::ExpressionLanguage)
+        # @param expression_location [Module] The Module on-which to define the
+        #     class.  Primarily used for testing purposes.
+        # @param expression_evaluator_loc
+        def initialize(ast, expression_language_loc = nil, expression_evaluator_loc = nil)
           @ast = ast
-          @location = location
+          @expression_language_loc = expression_language_loc
+          @expression_evaluator_loc = expression_evaluator_loc
         end
 
         ##
@@ -74,6 +76,27 @@ module Dugout
         end
 
         private
+
+        ##
+        # The Location to define AST classes on.
+        def expression_language_location
+          @expression_language_loc || Dugout::Math::Model::Expression::Language
+        end
+        alias location expression_language_location
+
+        ##
+        # The Location to define evaluator methods on.
+        def expression_evaluator_location
+          @expression_evaluator_loc || Dugout::Math::Model::Expression::Evaluator
+        end
+
+        ##
+        # Defines an approriate method in the expression evaluator for this Op
+        def define_expression_evaluator_method!
+          expression_evaluator_location.define_singleton_method(ast.operator_name) do |*args|
+            const_get(ast.name).new(*args)
+          end
+        end
 
         ##
         # Calculates the default display function to use when none is specified
