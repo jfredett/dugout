@@ -1,12 +1,14 @@
 module Dugout
   module Math
     module Model
-      define_primitive_op :Log do
-        attribute :value
+      module AST
+        define_primitive_op :Log do
+          attribute :value
 
-        operator 'log'
+          operator 'log'
 
-        display_function { "log(#{value})" }
+          display_function { "log(#{value})" }
+        end
       end
     end
   end

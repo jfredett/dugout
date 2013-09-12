@@ -1,16 +1,18 @@
 module Dugout
   module Math
     module Model
-      define_derived_op :Sqrt do
-        attribute :radicand
+      module AST
+        define_derived_op :Sqrt do
+          attribute :radicand
 
-        operator 'root'
+          operator 'root'
 
-        implementation do
-          radicand ** (lit(1) / lit(2))
+          implementation do
+            radicand ** (lit(1) / lit(2))
+          end
+
+          display_function { "sqrt(#{value})" }
         end
-
-        display_function { "sqrt(#{value})" }
       end
     end
   end

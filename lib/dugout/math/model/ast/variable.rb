@@ -1,12 +1,14 @@
 module Dugout
   module Math
     module Model
-      define_primitive_op :Variable do
-        attribute :name
+      module AST
+        define_primitive_op :Variable do
+          attribute :name
 
-        operator 'var'
+          operator 'var'
 
-        display_function { name }
+          display_function { name }
+        end
       end
     end
   end

@@ -1,12 +1,14 @@
 module Dugout
   module Math
     module Model
-      define_primitive_op :Literal do
-        attribute :value
+      module AST
+        define_primitive_op :Literal do
+          attribute :value
 
-        operator 'lit'
+          operator 'lit'
 
-        display_function { value }
+          display_function { value }
+        end
       end
     end
   end
