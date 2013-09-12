@@ -3,38 +3,30 @@ require 'spec_helper'
 describe Dugout::Math::Model::Reifier do
   subject(:reifier) { Dugout::Math::Model::Reifier }
 
-  it { should respond_to :define_primitive_ops! }
-  it { should respond_to :define_derived_ops! }
-  it { should respond_to :define_expression_parser! }
-
-  it { should respond_to :compile! }
-
-  specify 'the following constants are undefined' do
-    defined?(Dugout::Math::Model::Multiplication).should_not be
-    defined?(Dugout::Math::Model::Addition).should_not be
-    defined?(Dugout::Math::Model::Variable).should_not be
-    defined?(Dugout::Math::Model::Literal).should_not be
-    defined?(Dugout::Math::Model::Exponential).should_not be
-    defined?(Dugout::Math::Model::Log).should_not be
-    defined?(Dugout::Math::Model::Subtraction).should_not be
-    defined?(Dugout::Math::Model::Power).should_not be
-    defined?(Dugout::Math::Model::Sqrt).should_not be
+  # clean out the namespace before compiling. This should probably
+  # be a method on Math::Model
+  before(:all) do
+    Dugout::Math::Model::ExpressionLanguage.tap do |expression_language|
+      expression_language.constants.each do |constant|
+        expression_language.send(:remove_const, constant)
+      end
+    end
   end
 
-  context '' do
-    before { reifier.compile! }
+  it { should respond_to :define_ops! }
+  it { should respond_to :define_expression_parser! }
+  it { should respond_to :compile! }
 
-    specify 'the following constants are now defined' do
-      defined?(Dugout::Math::Model::Multiplication).should be
-      defined?(Dugout::Math::Model::Addition).should be
-      defined?(Dugout::Math::Model::Variable).should be
-      defined?(Dugout::Math::Model::Literal).should be
-      defined?(Dugout::Math::Model::Exponential).should be
-      defined?(Dugout::Math::Model::Log).should be
-      defined?(Dugout::Math::Model::Subtraction).should be
-      defined?(Dugout::Math::Model::Power).should be
-      defined?(Dugout::Math::Model::Sqrt).should be
+  # TODO: move this into it's own spec
+  describe 'the reified expression language' do
+    subject(:expression_language) { Dugout::Math::Model::ExpressionLanguage }
+
+    its(:constants) { should be_empty }
+    describe 'after compiling' do
+      before { reifier.compile! }
+
+      its(:constants) { should =~ Dugout::Math::Model.ops.map(&:name) }
+
     end
   end
 end
-
