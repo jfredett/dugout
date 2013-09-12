@@ -51,9 +51,23 @@ module Dugout
         end
 
         def display_function
-          x = ast.children[Parser::DisplayFunction]
+          x = ast.children.fetch(Parser::DisplayFunction, default_display_function)
           x.block unless x.nil?
         end
+
+        def default_display_function
+          _attributes = attributes
+          if binary_op?
+            lambda {
+              "(#{_attributes.map { |i| send(i.name).to_s }.join(" #{operator} ")})"
+            }
+          else
+            lambda {
+              "#{operator}(#{_attributes.map { |i| send(i.name).to_s }.join(',')})"
+            }
+          end
+        end
+
 
         def binary_op?
           arity == 2
@@ -97,26 +111,9 @@ module Dugout
         end
 
         def define_display_functions!
-          if display_function
-            define! do |compiler|
-              define_method(:to_s, compiler.display_function)
-            end
-          else
-            if binary_op?
-              define! do |compiler|
-                define_method(:to_s) do
-                  "(#{compiler.attributes.map { |i| send(i.name).to_s }.join(" #{operator} ")})"
-                end
-              end
-            else
-              define! do |compiler|
-                define_method(:to_s) do
-                  "#{operator}(#{compiler.attributes.map { |i| send(i.name).to_s }.join(',')})"
-                end
-              end
-            end
+          define! do |compiler|
+            define_method(:to_s, &compiler.display_function)
           end
-
           define! { alias inspect to_s }
         end
 
