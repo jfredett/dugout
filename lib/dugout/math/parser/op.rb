@@ -28,6 +28,10 @@ module Dugout
         def attributes
           Array(children[Attribute])
         end
+
+        def operator_name
+          children[Operator].name.to_sym
+        end
       end
 
       class PrimitiveOp < Op
