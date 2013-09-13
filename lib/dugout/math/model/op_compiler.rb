@@ -1,8 +1,6 @@
 module Dugout
   module Math
     module Model
-      module ExpressionLanguage ; end
-
       ##
       # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
       # the Model definition AST into a real expression-AST class

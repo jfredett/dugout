@@ -2,6 +2,7 @@ module Dugout
   module Math
     module Model
       module ExpressionEvaluator; end
+      module ExpressionLanguage ; end
 
       module Reifier
         def self.compile!
