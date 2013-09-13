@@ -1,11 +1,9 @@
 require 'spec_helper'
 
-# XXX: this is probably better described as the ExpressionLanguage spec.
-# TODO: rename Expression* to Expression::* ?
-describe Dugout::Math::Model::ExpressionLanguage do
+describe Dugout::Math::Model::Expression::Language do
   subject(:reifier) { Dugout::Math::Model::Reifier }
-  let(:expression_evaluator) { Dugout::Math::Model::ExpressionEvaluator }
-  let(:expression_language) { Dugout::Math::Model::ExpressionLanguage }
+  let(:expression_evaluator) { Dugout::Math::Model::Expression::Evaluator }
+  let(:expression_language) { Dugout::Math::Model::Expression::Language }
 
   describe 'the expression language' do
     before { reifier.clean! }

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Dugout::Math::Model::ExpressionEvaluator do
+describe Dugout::Math::Model::Expression::Evaluator do
   let(:reifier) { Dugout::Math::Model::Reifier }
-  let(:expression_language) { Dugout::Math::Model::ExpressionLanguage }
-  subject(:exp_eval) { Dugout::Math::Model::ExpressionEvaluator }
+  let(:expression_language) { Dugout::Math::Model::Expression::Language }
+  subject(:exp_eval) { Dugout::Math::Model::Expression::Evaluator }
 
   def operator_for(klass)
     if op = Dugout::Math::Model.ops.detect { |op| op.name == klass }

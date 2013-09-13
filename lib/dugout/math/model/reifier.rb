@@ -1,19 +1,21 @@
 module Dugout
   module Math
     module Model
-      module ExpressionEvaluator; end
-      module ExpressionLanguage ; end
+      module Expression
+        module Evaluator; end
+        module Language ; end
+      end
 
       module Reifier
         def self.compile!
           Dugout::Math::Model.ops.each do |op|
-            OpCompiler.new(op, ExpressionLanguage, ExpressionEvaluator).run!
+            OpCompiler.new(op, Expression::Language, Expression::Evaluator).run!
           end
         end
 
         def self.clean!
-          Dugout::Math::Model.const_set(:ExpressionEvaluator, Module.new)
-          Dugout::Math::Model.const_set(:ExpressionLanguage, Module.new)
+          Dugout::Math::Model::Expression.const_set(:Evaluator, Module.new)
+          Dugout::Math::Model::Expression.const_set(:Language, Module.new)
         end
       end
     end
