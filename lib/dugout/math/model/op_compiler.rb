@@ -180,18 +180,6 @@ module Dugout
           op_class.class_exec(self, &block)
         end
       end
-
-      ##
-      # A Unit-of-work style class for turning a Parser::DerivedOp chunk of
-      # the Model definition AST into a real expression-AST class
-      class DerivedOpCompiler < OpCompiler
-      end
-
-      ##
-      # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
-      # the Model definition AST into a real expression-AST class
-      class PrimitiveOpCompiler < OpCompiler
-      end
     end
   end
 end
