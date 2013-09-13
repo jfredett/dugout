@@ -7,17 +7,17 @@ module Dugout
       # used in normal operation
       Defn = model { }
 
-      # @returns The set of all primitive ops defined by the grammar
+      # @return The set of all primitive ops defined by the grammar
       def self.primitive_ops
         Defn.children[Parser::PrimitiveOp]
       end
 
-      # @returns The set of all derived ops defined by the grammar
+      # @return The set of all derived ops defined by the grammar
       def self.derived_ops
         Defn.children[Parser::DerivedOp]
       end
 
-      # @returns The set of all ops defined by the grammar
+      # @return The set of all ops defined by the grammar
       def self.ops
         primitive_ops + derived_ops
       end
