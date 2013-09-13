@@ -1,0 +1,75 @@
+# Operation
+
+## Phase 1, parsing to high-level structure
+
+User calls `Dugout::Math::Model::Expression.define` (or some more convenient
+wrapper), and passes a block, this produces a tree of classes directly
+representing the elements of the AST -- with derived ops being 'first class',
+like primitives. ie:
+
+  1 + (2 - 3)
+
+Becomes:
+
+  Addition.new(
+    Literal.new(1),
+    Subtraction.new(
+      Literal.new(2),
+      Literal.new(3)
+    )
+  )
+
+NB. It would be ideal to write this bare, like `1 + (2 - 3)`, but implementation
+wise it might be easier to start with `lit(1) + (lit(2) - lit(3))`
+
+## Phase 2, primitivization
+
+At this stage, the AST from the above is reduced to use the set of primitive
+operations and those operations only. This is done using the DerivedOp's
+implementation value. We can define #primitivize! on each element of the AST,
+which walks down the tree and either passes through (if the node is primitive),
+or converts to it's implementational form (if the node is derived). This would
+turn:
+
+  Addition.new(
+    Literal.new(1),
+    Subtraction.new(
+      Literal.new(2),
+      Literal.new(3))
+
+to:
+
+  Addition.new(
+    Literal.new(1),
+    Addition.new(
+      Literal.new(2),
+      Multiplication.new(
+        Literal.new(-1),
+        Literal.new(3)
+      )
+    )
+  )
+
+Note that the primitivization step should self-recurse, calling primitivize on
+the whole of the new-expression, in case a derived-op is derived from another
+derived op. This allows us to primitize the whole AST in one pass.
+
+## Phase 3, simplification
+
+The final pass runs a series of visitors on each node iteratively. Each visitor
+attempts to reduce the tree in a middleware-style pattern. ie, there may be an
+'AdditiveConstantFolder' simplifier and an 'AdditiveIdentityRemover' simplifier.
+This stage is technically optional, but is valuable for output and performance
+reasons. In this case, the result would be a simple literal, but each visitation
+of the simplifier simply runs till it's subtree no longer changes after an
+iteration.
+
+## Phase 4, wrapping
+
+The final phase simply wraps the resulting tree in an object which can respond
+to useful commands to deal with the tree, in particular it should delegate any
+operations defined by the DSL to it's AST, so that it can act in a convenient
+way without necessarily exposing all the internals of the AST. It will also
+provide a convenient API for walking over the tree with other visitor-stacks
+(like the simplifier). This is needed for when the differentiator is built (it
+will be such a visitation stack, ideally)
