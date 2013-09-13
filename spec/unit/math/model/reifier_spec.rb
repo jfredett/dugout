@@ -13,8 +13,6 @@ describe Dugout::Math::Model::Reifier do
     end
   end
 
-  it { should respond_to :define_ops! }
-  it { should respond_to :define_expression_parser! }
   it { should respond_to :compile! }
 
   # TODO: move this into it's own spec
@@ -28,7 +26,6 @@ describe Dugout::Math::Model::Reifier do
       its(:constants) { should =~ Dugout::Math::Model.ops.map(&:name) }
 
       # TODO: Test creating expressions with the defined methods
-      # TODO: move expression parser defn into op_compiler
     end
   end
 end

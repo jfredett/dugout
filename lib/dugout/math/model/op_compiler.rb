@@ -52,6 +52,7 @@ module Dugout
           define_attribute_getters!
           define_operator!
           define_display_functions!
+          define_expression_evaluator_method!
         end
 
         ##
@@ -76,6 +77,12 @@ module Dugout
         end
 
         private
+
+        def define_expression_evaluator_method!
+          expression_evaluator_location.define_singleton_method(ast.operator_name) do |*args|
+            const_get(ast.name).new(*args)
+          end
+        end
 
         ##
         # The Location to define AST classes on.
