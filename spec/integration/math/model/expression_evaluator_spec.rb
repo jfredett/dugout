@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Dugout::Math::Model::ExpressionEvaluator do
   let(:reifier) { Dugout::Math::Model::Reifier }
+  let(:expression_language) { Dugout::Math::Model::ExpressionLanguage }
   subject(:exp_eval) { Dugout::Math::Model::ExpressionEvaluator }
 
   def operator_for(klass)
@@ -36,5 +37,21 @@ describe Dugout::Math::Model::ExpressionEvaluator do
     it { should respond_to operator_for(:Subtraction)    }
     it { should respond_to operator_for(:Power)          }
     it { should respond_to operator_for(:Sqrt)           }
+
+    describe 'after cleaning, no operators remain defined' do
+      before { reifier.clean! }
+
+      it { should_not respond_to operator_for(:Multiplication) }
+      it { should_not respond_to operator_for(:Addition)       }
+      it { should_not respond_to operator_for(:Variable)       }
+      it { should_not respond_to operator_for(:Literal)        }
+      it { should_not respond_to operator_for(:Exponential)    }
+      it { should_not respond_to operator_for(:Log)            }
+      it { should_not respond_to operator_for(:Subtraction)    }
+      it { should_not respond_to operator_for(:Power)          }
+      it { should_not respond_to operator_for(:Sqrt)           }
+    end
+
   end
 end
+
