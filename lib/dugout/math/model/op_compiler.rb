@@ -2,8 +2,9 @@ module Dugout
   module Math
     module Model
       ##
-      # A Unit-of-work style class for turning a Parser::PrimitiveOp chunk of
-      # the Model definition AST into a real expression-AST class
+      # A Unit-of-work style class for turning a [Parser::PrimitiveOp] or
+      # [Parser::DerivedOp] chunk of the Model definition AST into a real
+      # expression-AST class
       class OpCompiler
         attr_reader :ast
 
@@ -18,9 +19,10 @@ module Dugout
         #
         # @param ast [Dugout::Math::Parser::PrimitiveOp] The AST to reify into
         #     the model
-        # @param expression_location [Module] The Module on-which to define the
+        # @param expression_language_loc [Module] The Module on-which to define the
         #     class.  Primarily used for testing purposes.
-        # @param expression_evaluator_loc
+        # @param expression_evaluator_loc [Module] The Module on-which to define
+        #     the evaluator method. Primarily used for testing purposes.
         def initialize(ast, expression_language_loc = nil, expression_evaluator_loc = nil)
           @ast = ast
           @expression_language_loc = expression_language_loc
