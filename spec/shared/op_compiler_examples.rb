@@ -36,7 +36,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 
   context 'before running the compiler' do
     it "has not yet defined the operator in the namespace" do
-      defined?(test_namespace::Example).should_not be
+      test_namespace.constants.should_not include :Example
     end
   end
 
@@ -118,7 +118,7 @@ end
 
 shared_examples_for 'a generated class' do
   it "has defines the operator in the namespace" do
-    defined?(test_namespace::Example).should be
+    test_namespace.constants.should include :Example
   end
 
   describe 'the created class' do
