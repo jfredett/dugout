@@ -91,6 +91,24 @@ describe Dugout::Math::Model::Expression::Evaluator do
         it { should_not respond_to operator_for(:Sqrt)           }
       end
     end
+
+    describe 'evaluating an expression' do
+      let(:e) { expression_language }
+      subject(:expression) { expression_namespace.define { log(lit(10) * var(:x) - lit(3)) } }
+      let(:expected_parse_tree) {
+        e::Log.new(
+          e::Subtraction.new(
+            e::Multiplication.new(
+              e::Literal.new(10),
+              e::Variable.new(:x)
+            ),
+            e::Literal.new(3)
+          )
+        )
+      }
+
+      specify { expression.should == expected_parse_tree }
+    end
   end
 end
 
