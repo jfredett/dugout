@@ -42,7 +42,12 @@ module Dugout
         #
         # @return [Class] the compiled op's class
         def op_class
-          @op_class ||= location.const_set(ast.name, Class.new)
+          return @op_class if defined?(@op_class)
+          infix_operators = expression_evaluator_location::InfixOperators
+          @op_class = location.const_set(
+            ast.name,
+            Class.new { include infix_operators }
+          )
         end
 
         ##
