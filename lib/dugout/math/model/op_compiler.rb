@@ -9,6 +9,7 @@ module Dugout
         attr_reader :ast
 
         extend Forwardable
+        INFIX_OPERATORS = [:+, :*, :/, :-, :'@', :'$', :!, :%, :^, :'=', :'==']
 
         delegate [:name, :attributes] => :ast
         def_delegator :attributes, :length, :arity
@@ -89,7 +90,7 @@ module Dugout
         def define_expression_evaluator_method!
           klass = location.const_get(name)
 
-          if binary_op?
+          if binary_op? && infix?
             # if binop, define on operator module so that everybody responds to
             # it.
             expression_evaluator_location::InfixOperators.send(:define_method, ast.operator_name) do |*args|
@@ -102,6 +103,10 @@ module Dugout
               klass.new(*args)
             end
           end
+        end
+
+        def infix?
+          INFIX_OPERATORS.include? operator.to_sym
         end
 
         ##
@@ -123,7 +128,7 @@ module Dugout
         # @return [Proc] a proc to be used as a display function
         def default_display_function
           _attributes = attributes
-          if binary_op?
+          if binary_op? && infix?
             lambda {
               "(#{_attributes.map { |i| send(i.name).to_s }.join(" #{operator} ")})"
             }

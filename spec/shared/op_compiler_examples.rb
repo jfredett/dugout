@@ -47,21 +47,6 @@ shared_examples_for 'an op compiler for a' do |op_class|
       it_behaves_like 'a generated class'
     end
 
-    describe 'a binary op without a defined display function' do
-      # we need to override these to known values
-      let(:attributes) { [:left, :right] }
-      let(:left_val) { 1 }
-      let(:right_val) { 2 }
-
-      before { op_compiler.run! }
-
-      it_behaves_like 'a generated class'
-
-      subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
-
-      its(:to_s) { should == op_instance.inspect }
-      its(:inspect) { should ==  "(#{left_val} #{op_operator} #{right_val})" }
-    end
 
     describe 'a unary op without a defined display function' do
       # we need to override these to known values
@@ -78,42 +63,81 @@ shared_examples_for 'an op compiler for a' do |op_class|
       its(:inspect) { should ==  "#{op_operator}(#{only_val})" }
     end
 
-    describe 'a n-ary op without a defined display function' do
-      # we need to override these to known values
-      let(:attributes) { [:left, :center, :right] }
-      let(:left_val) { 1 }
-      let(:right_val) { 2 }
-      let(:center_val) { 3 }
+    describe 'binary ops' do
+      describe 'without a defined display function' do
+        context 'with a infix operator' do
+          # we need to override these to known values
+          let(:attributes) { [:left, :right] }
+          let(:left_val) { 1 }
+          let(:right_val) { 2 }
+          let(:op_operator) { '@' }
 
-      before { op_compiler.run! }
+          before { op_compiler.run! }
 
-      it_behaves_like 'a generated class'
+          it_behaves_like 'a generated class'
 
-      subject(:op_instance) { test_namespace::Example.new(left_val, center_val, right_val) }
+          subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
 
-      its(:to_s) { should == op_instance.inspect }
-      its(:inspect) { should ==  "#{op_operator}(#{left_val},#{center_val},#{right_val})" }
-    end
+          its(:to_s) { should == op_instance.inspect }
+          its(:inspect) { should ==  "(#{left_val} #{op_operator} #{right_val})" }
+        end
 
-    describe 'with a defined display function' do
-      # we need to override these to known values
-      let(:attributes) { [:left, :right] }
-      let(:left_val) { 1 }
-      let(:right_val) { 2 }
+        context 'without an infix operator' do
+          # we need to override these to known values
+          let(:attributes) { [:left, :right] }
+          let(:left_val) { 1 }
+          let(:right_val) { 2 }
+          let(:op_operator) { 'nth_root' }
 
-      before do
-        ast.display_function { "Left: #{left}, Right: #{right}, Op: #{operator}" }
-        op_compiler.run!
+          before { op_compiler.run! }
+
+          it_behaves_like 'a generated class'
+
+          subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+
+          its(:to_s) { should == op_instance.inspect }
+          its(:inspect) { should ==  "#{op_operator}(#{left_val},#{right_val})" }
+        end
       end
 
-      it_behaves_like 'a generated class'
+      describe 'with a defined display function' do
+        # we need to override these to known values
+        let(:attributes) { [:left, :right] }
+        let(:left_val) { 1 }
+        let(:right_val) { 2 }
 
-      subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+        before do
+          ast.display_function { "Left: #{left}, Right: #{right}, Op: #{operator}" }
+          op_compiler.run!
+        end
 
-      its(:to_s) { should == op_instance.inspect }
-      its(:inspect) { should ==  "Left: #{left_val}, Right: #{right_val}, Op: #{op_operator}" }
+        it_behaves_like 'a generated class'
+
+        subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+
+        its(:to_s) { should == op_instance.inspect }
+        its(:inspect) { should ==  "Left: #{left_val}, Right: #{right_val}, Op: #{op_operator}" }
+      end
     end
   end
+
+  describe 'a n-ary op without a defined display function' do
+    # we need to override these to known values
+    let(:attributes) { [:left, :center, :right] }
+    let(:left_val) { 1 }
+    let(:right_val) { 2 }
+    let(:center_val) { 3 }
+
+    before { op_compiler.run! }
+
+    it_behaves_like 'a generated class'
+
+    subject(:op_instance) { test_namespace::Example.new(left_val, center_val, right_val) }
+
+    its(:to_s) { should == op_instance.inspect }
+    its(:inspect) { should ==  "#{op_operator}(#{left_val},#{center_val},#{right_val})" }
+  end
+
 end
 
 shared_examples_for 'a generated class' do
