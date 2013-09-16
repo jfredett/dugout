@@ -13,9 +13,9 @@ skeptical the perf will suffer, really)
 
 # Status
 
-* MetaDSL needs tests
-* Reifier needs to reify stuff
-* expression parser -> reified datamodel needs to be written
+* Derivative operator needs to be defined
+* Simplificator needs to interpret derivative operator appropriately (ie, expand
+  out the derivative)
 
 # Simplificator
 
