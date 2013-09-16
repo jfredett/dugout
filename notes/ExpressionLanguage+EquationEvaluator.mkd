@@ -22,6 +22,18 @@ Becomes:
 NB. It would be ideal to write this bare, like `1 + (2 - 3)`, but implementation
 wise it might be easier to start with `lit(1) + (lit(2) - lit(3))`
 
+### Problems
+
+Receiver for operations is incorrect, rather than `+` being called on
+`Expression`, it gets called on `lit`.
+
+In retrospect, this is obvious, but it does present some issues, in particular
+we need an alternate method of combining expressions. All we should have to do
+is define `Operations` -- a module/superclass for every defined operation. We
+then define the implementation for each of the binary operator methods there. In
+the case of unary or n-ary operators, those still evaluated in the context of
+the Expression module, so they can still be singletons there.
+
 ## Phase 2, primitivization
 
 At this stage, the AST from the above is reduced to use the set of primitive

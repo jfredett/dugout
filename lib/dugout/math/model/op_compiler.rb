@@ -100,14 +100,6 @@ module Dugout
         end
 
         ##
-        # Defines an approriate method in the expression evaluator for this Op
-        def define_expression_evaluator_method!
-          expression_evaluator_location.define_singleton_method(ast.operator_name) do |*args|
-            const_get(ast.name).new(*args)
-          end
-        end
-
-        ##
         # Calculates the default display function to use when none is specified
         #
         # @return [Proc] a proc to be used as a display function
