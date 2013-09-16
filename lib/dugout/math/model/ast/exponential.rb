@@ -6,8 +6,6 @@ module Dugout
           attribute :value
 
           operator 'exp'
-
-          display_function { "exp(#{value})" }
         end
       end
     end

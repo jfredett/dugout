@@ -6,8 +6,6 @@ module Dugout
           attribute :value
 
           operator 'log'
-
-          display_function { "log(#{value})" }
         end
       end
     end

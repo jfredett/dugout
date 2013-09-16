@@ -10,8 +10,6 @@ module Dugout
           implementation do
             radicand ** (lit(1) / lit(2))
           end
-
-          display_function { "sqrt(#{value})" }
         end
       end
     end
