@@ -22,5 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
 
   spec.add_dependency 'katuv', '~> 0.0.6'
+  spec.add_dependency 'equalizer', '~> 0.0.7'
 end
 
