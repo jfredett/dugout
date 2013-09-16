@@ -2,6 +2,14 @@ module Dugout
   module Math
     module Model
       module Reifier
+        ##
+        # Compile all the consitutent classes and populate the Expression
+        # namespace
+        #
+        # @note This will cause method caches to clear, minimize it's use for
+        # optimum performance, ideally once at the start of your program
+        #
+        # @api private
         def self.compile!
           clean!
 
@@ -14,6 +22,14 @@ module Dugout
           end
         end
 
+        ##
+        # clean out the Dugout::Math::Model namespace of the `Expression` module
+        # and all it's submodules
+        #
+        # @note This will cause method caches to clear, minimize it's use for
+        # optimum performance, ideally once at the start of your program
+        #
+        # @api private
         def self.clean!
           Dugout::Math::Model.const_set(:Expression, Module.new)
           Dugout::Math::Model::Expression.const_set(:Evaluator, Module.new)
