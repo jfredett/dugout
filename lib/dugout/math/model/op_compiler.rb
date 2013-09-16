@@ -58,6 +58,7 @@ module Dugout
           define_operator!
           define_display_functions!
           define_expression_evaluator_method!
+          define_equality_method!
         end
 
         ##
@@ -86,8 +87,20 @@ module Dugout
         ##
         # Defines an approriate method in the expression evaluator for this Op
         def define_expression_evaluator_method!
-          expression_evaluator_location.define_singleton_method(ast.operator_name) do |*args|
-            const_get(ast.name).new(*args)
+          klass = location.const_get(name)
+
+          if binary_op?
+            # if binop, define on operator module so that everybody responds to
+            # it.
+            expression_evaluator_location::InfixOperators.send(:define_method, ast.operator_name) do |*args|
+              klass.new(self, *args)
+            end
+          else
+            # otherwise, just define it on the expression namespace proper so
+            # it's a first-class function
+            expression_evaluator_location.define_singleton_method(ast.operator_name) do |*args|
+              klass.new(*args)
+            end
           end
         end
 
@@ -133,11 +146,17 @@ module Dugout
         def define_initializer!
           define! do |compiler|
             define_method(:initialize) do |*args|
-              raise ArgumentError unless args.length == compiler.arity
+              raise ArgumentError, "incorrect number of arguments, #{args.length} for #{compiler.arity}" unless args.length == compiler.arity
               args.zip(compiler.attributes).each do |arg, attr|
                 instance_variable_set("@#{attr.name}", arg)
               end
             end
+          end
+        end
+
+        def define_equality_method!
+          define! do |compiler|
+            include Equalizer.new(*compiler.attributes.map(&:name))
           end
         end
 

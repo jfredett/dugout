@@ -26,6 +26,48 @@ describe Dugout::Math::Model::Expression::Language do
           expression_language.constants.should be_empty
         end
       end
+
+      describe 'ast equality' do
+        let(:e) { expression_language } # for convenience below
+        let(:ast) {
+          e::Log.new(
+            e::Addition.new(
+              e::Variable.new(:x),
+              e::Literal.new(10)
+            )
+          )
+        }
+        let(:equal_ast) {
+          e::Log.new(
+            e::Addition.new(
+              e::Variable.new(:x),
+              e::Literal.new(10)
+            )
+          )
+        }
+        let(:equivalent_nonequal_ast) {
+          e::Log.new(
+            e::Addition.new(
+              e::Literal.new(10),
+              e::Variable.new(:x)
+            )
+          )
+        }
+        let(:completely_different_ast) {
+          e::Exponential.new(
+            e::Subtraction.new(
+              e::Variable.new(:i),
+              e::Literal.new(1129310)
+            )
+          )
+        }
+
+        specify { ast.should == ast }
+        specify { ast.should == equal_ast }
+        specify { ast.should_not == equivalent_nonequal_ast }
+        specify { ast.should_not == completely_different_ast }
+
+      end
     end
   end
 end
