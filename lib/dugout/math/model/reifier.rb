@@ -31,6 +31,7 @@ module Dugout
         #
         # @api private
         def self.clean!
+          Dugout::Math::Model.send(:remove_const, :Expression) rescue nil # skirt a warning on MRI
           Dugout::Math::Model.const_set(:Expression, Module.new)
           Dugout::Math::Model::Expression.const_set(:Evaluator, Module.new)
           Dugout::Math::Model::Expression::Evaluator.const_set(:InfixOperators, Module.new)
