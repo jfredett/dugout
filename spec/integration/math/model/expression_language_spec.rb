@@ -17,6 +17,8 @@ describe Dugout::Math::Model::Expression::Language do
       before { reifier.compile! }
       its(:constants) { should_not be_empty }
       its(:constants) { should =~ Dugout::Math::Model.ops.map(&:name) }
+      specify { expression_evaluator.constants.should include :InfixOperators }
+
 
       describe 'running #clean after compilation' do
         it 'deletes all the language constants' do
