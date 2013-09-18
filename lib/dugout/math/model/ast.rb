@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'dugout/math/model/ast/addition'
 require 'dugout/math/model/ast/exponential'
 require 'dugout/math/model/ast/literal'

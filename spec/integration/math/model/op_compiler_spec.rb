@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 # integrates across the Compiled model and the parser

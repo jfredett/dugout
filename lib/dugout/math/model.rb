@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'dugout/math/model/definition'
 require 'dugout/math/model/ast'
 
