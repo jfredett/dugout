@@ -1,5 +1,5 @@
 # encoding: utf-8
-require "dugout/version"
+require 'dugout/version'
 
 require 'katuv'
 require 'equalizer'

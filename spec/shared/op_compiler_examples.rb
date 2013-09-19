@@ -36,7 +36,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
   subject(:op_compiler) { compiler_class.new(ast, test_namespace) }
 
   context 'before running the compiler' do
-    it "has not yet defined the operator in the namespace" do
+    it 'has not yet defined the operator in the namespace' do
       test_namespace.constants.should_not include :Example
     end
   end
@@ -142,7 +142,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 end
 
 shared_examples_for 'a generated class' do
-  it "has defines the operator in the namespace" do
+  it 'has defines the operator in the namespace' do
     test_namespace.constants.should include :Example
   end
 
