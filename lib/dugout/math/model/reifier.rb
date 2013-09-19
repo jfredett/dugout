@@ -11,11 +11,11 @@ module Dugout
         # optimum performance, ideally once at the start of your program
         #
         # @api private
-        def self.compile!
-          clean!
+        def self.compile!(namespace = Dugout::Math::Model)
+          clean!(namespace)
 
           Dugout::Math::Model.ops.each do |op|
-            OpCompiler.new(op, Expression::Language, Expression::Evaluator).run!
+            OpCompiler.new(op, namespace).run!
           end
 
           Expression.define_singleton_method(:define) do |&block|
@@ -31,12 +31,12 @@ module Dugout
         # optimum performance, ideally once at the start of your program
         #
         # @api private
-        def self.clean!
-          Dugout::Math::Model.send(:remove_const, :Expression) rescue nil # skirt a warning on MRI
-          Dugout::Math::Model.const_set(:Expression, Module.new)
-          Dugout::Math::Model::Expression.const_set(:Evaluator, Module.new)
-          Dugout::Math::Model::Expression::Evaluator.const_set(:InfixOperators, Module.new)
-          Dugout::Math::Model::Expression.const_set(:Language, Module.new)
+        def self.clean!(namespace = Dugout::Math::Model)
+          namespace.send(:remove_const, :Expression) rescue nil # skirt a warning on MRI
+          namespace.const_set(:Expression, Module.new)
+          namespace::Expression.const_set(:Evaluator, Module.new)
+          namespace::Expression::Evaluator.const_set(:InfixOperators, Module.new)
+          namespace::Expression.const_set(:Language, Module.new)
         end
       end
     end

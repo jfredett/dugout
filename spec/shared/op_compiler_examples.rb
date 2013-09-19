@@ -31,6 +31,8 @@ shared_examples_for 'an op compiler for a' do |op_class|
     end
 
     ast.operator op_operator
+
+    Dugout::Math::Model::Reifier.clean!(test_namespace)
   end
 
   subject(:op_compiler) { compiler_class.new(ast, test_namespace) }
@@ -57,7 +59,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 
       it_behaves_like 'a generated class'
 
-      subject(:op_instance) { test_namespace::Example.new(only_val) }
+      subject(:op_instance) { test_namespace::Expression::Language::Example.new(only_val) }
 
       its(:to_s) { should == op_instance.inspect }
       its(:inspect) { should ==  "#{op_operator}(#{only_val})" }
@@ -76,7 +78,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 
           it_behaves_like 'a generated class'
 
-          subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+          subject(:op_instance) { test_namespace::Expression::Language::Example.new(left_val, right_val) }
 
           its(:to_s) { should == op_instance.inspect }
           its(:inspect) { should ==  "(#{left_val} #{op_operator} #{right_val})" }
@@ -93,7 +95,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 
           it_behaves_like 'a generated class'
 
-          subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+          subject(:op_instance) { test_namespace::Expression::Language::Example.new(left_val, right_val) }
 
           its(:to_s) { should == op_instance.inspect }
           its(:inspect) { should ==  "#{op_operator}(#{left_val},#{right_val})" }
@@ -113,7 +115,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 
         it_behaves_like 'a generated class'
 
-        subject(:op_instance) { test_namespace::Example.new(left_val, right_val) }
+        subject(:op_instance) { test_namespace::Expression::Language::Example.new(left_val, right_val) }
 
         its(:to_s) { should == op_instance.inspect }
         its(:inspect) { should ==  "Left: #{left_val}, Right: #{right_val}, Op: #{op_operator}" }
@@ -132,7 +134,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
 
     it_behaves_like 'a generated class'
 
-    subject(:op_instance) { test_namespace::Example.new(left_val, center_val, right_val) }
+    subject(:op_instance) { test_namespace::Expression::Language::Example.new(left_val, center_val, right_val) }
 
     its(:to_s) { should == op_instance.inspect }
     its(:inspect) { should ==  "#{op_operator}(#{left_val},#{center_val},#{right_val})" }
@@ -141,13 +143,14 @@ shared_examples_for 'an op compiler for a' do |op_class|
 end
 
 shared_examples_for 'a generated class' do
-  it 'has defines the operator in the namespace' do
-    test_namespace.constants.should include :Example
+  it 'has defined the operator in the namespace' do
+    test_namespace::Expression::Language.constants.should include :Example
   end
 
   describe 'the created class' do
+    let(:example_op_class) { test_namespace::Expression::Language::Example }
     context 'class' do
-      subject(:example_op_class) { test_namespace::Example }
+      subject { example_op_class }
 
       specify { expect { example_op_class.new(*attributes) }.to_not raise_error }
 
@@ -157,7 +160,7 @@ shared_examples_for 'a generated class' do
     end
 
     context 'instance' do
-      subject(:example_op) { test_namespace::Example.new(*attributes) }
+      subject(:example_op) { example_op_class.new(*attributes) }
 
       it { should respond_to :operator }
       its(:operator) { should == op_operator }

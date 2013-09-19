@@ -25,11 +25,11 @@ module Dugout
         #     class.  Primarily used for testing purposes.
         # @param expression_evaluator_loc [Module] The Module on-which to define
         #     the evaluator method. Primarily used for testing purposes.
-        def initialize(ast, expression_language_loc = nil, expression_evaluator_loc = nil)
+        def initialize(ast, expression_namespace)
           @ast = ast
-          @expression_language_loc = expression_language_loc
-          @expression_evaluator_loc = expression_evaluator_loc
+          @expression_namespace = expression_namespace::Expression
         end
+        attr_reader :expression_namespace
 
         ##
         # Cause the Operator class to be defined in Dugout::Math::Model
@@ -107,13 +107,15 @@ module Dugout
         ##
         # The Location to define AST classes on.
         def expression_language_location
-          @expression_language_loc || Dugout::Math::Model::Expression::Language
+          return @expression_language_location if defined? @expression_language_location
+          @expression_language_location = expression_namespace::Language
         end
 
         ##
         # The Location to define evaluator methods on.
         def expression_evaluator_location
-          @expression_evaluator_loc || Dugout::Math::Model::Expression::Evaluator
+          return @expression_evaluator_location if defined? @expression_evaluator_location
+          @expression_evaluator_location = expression_namespace::Evaluator
         end
 
         ##
