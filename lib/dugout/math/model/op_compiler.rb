@@ -7,7 +7,7 @@ module Dugout
       # [Parser::DerivedOp] chunk of the Model definition AST into a real
       # expression-AST class
       class OpCompiler
-        attr_reader :ast
+        attr_reader :ast, :expression_namespace
 
         extend Forwardable
         INFIX_OPERATORS = [:+, :*, :/, :-, :'@', :'$', :!, :%, :^, :'=', :'==']
@@ -29,7 +29,6 @@ module Dugout
           @ast = ast
           @expression_namespace = expression_namespace::Expression
         end
-        attr_reader :expression_namespace
 
         ##
         # Cause the Operator class to be defined in Dugout::Math::Model
