@@ -22,10 +22,14 @@ module Dugout
         #
         # @param ast [Dugout::Math::Parser::PrimitiveOp] The AST to reify into
         #     the model
-        # @param expression_language_loc [Module] The Module on-which to define the
-        #     class.  Primarily used for testing purposes.
-        # @param expression_evaluator_loc [Module] The Module on-which to define
-        #     the evaluator method. Primarily used for testing purposes.
+        # @param expression_namespace [Module] The namespace in which to build
+        #     the op, expects that it contains a module heirarchy of the form:
+        #
+        #     ns -> Expression -> Language
+        #                      -> Evaluator -> InfixOperators
+        #
+        #     you will probably never make use of this, it's primarily for
+        #     testing and dependency isolation.
         def initialize(ast, expression_namespace)
           @ast = ast
           @expression_namespace = expression_namespace::Expression
