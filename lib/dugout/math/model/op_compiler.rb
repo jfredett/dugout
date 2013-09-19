@@ -60,7 +60,6 @@ module Dugout
           define_operator!
           define_display_functions!
           define_expression_evaluator_method!
-          define_equality_method!
         end
 
         ##
@@ -151,20 +150,7 @@ module Dugout
         # Define the initializer on the compiled op's class
         def define_initializer!
           define! do |compiler|
-            define_method(:initialize) do |*args|
-              if args.length != compiler.arity
-                raise ArgumentError, "incorrect number of arguments, #{args.length} for #{compiler.arity}"
-              end
-              args.zip(compiler.attributes).each do |arg, attr|
-                instance_variable_set("@#{attr.name}", arg)
-              end
-            end
-          end
-        end
-
-        def define_equality_method!
-          define! do |compiler|
-            include Equalizer.new(*compiler.attributes.map(&:name))
+            include Concord::Public.new(*compiler.attributes.map { |attr| attr.name.to_sym })
           end
         end
 
