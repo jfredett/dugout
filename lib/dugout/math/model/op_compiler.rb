@@ -109,6 +109,9 @@ module Dugout
           end
         end
 
+        ##
+        # @return [true] if the operator is an infix
+        # @return [false] otherwise
         def infix?
           INFIX_OPERATORS.include? operator.to_sym
         end
