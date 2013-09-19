@@ -12,7 +12,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
   end
 
   let(:attributes) { ('a'..'z').to_a.sample(rand(10) + 1) }
-  let(:op_operator) { '@' }
+  let(:op_operator) { :'@' }
 
   # These dynamically construct the AST node we need to test against
   let(:dsl_namespace) { Dugout::Math::Model.model }
@@ -72,7 +72,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
           let(:attributes) { [:left, :right] }
           let(:left_val) { 1 }
           let(:right_val) { 2 }
-          let(:op_operator) { '@' }
+          let(:op_operator) { :'@' }
 
           before { op_compiler.run! }
 
@@ -89,7 +89,7 @@ shared_examples_for 'an op compiler for a' do |op_class|
           let(:attributes) { [:left, :right] }
           let(:left_val) { 1 }
           let(:right_val) { 2 }
-          let(:op_operator) { 'nth_root' }
+          let(:op_operator) { :nth_root }
 
           before { op_compiler.run! }
 

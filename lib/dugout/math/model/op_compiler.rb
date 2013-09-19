@@ -12,8 +12,9 @@ module Dugout
         extend Forwardable
         INFIX_OPERATORS = [:+, :*, :/, :-, :'@', :'$', :!, :%, :^, :'=', :'==']
 
-        delegate [:name, :attributes] => :ast
+        delegate [:name, :attributes, :children] => :ast
         def_delegator :attributes, :length, :arity
+        def_delegator :ast, :operator_name, :operator
 
         ##
         # Create a new Unit-of-work style compiler for the given chunk of the
@@ -41,20 +42,12 @@ module Dugout
         end
 
         ##
-        # The operator symbol for the op
-        #
-        # @return [String]
-        def operator
-          ast.children[Parser::Operator].name
-        end
-
-        ##
         # The function the op specified to use to display it, or a default
         # calculated based on the op's arity
         #
         # @return [Proc] a proc to be used as a display function
         def display_function
-          return default_display_function unless df = ast.children[Parser::DisplayFunction]
+          return default_display_function unless df = children[Parser::DisplayFunction]
           df.block
         end
 
@@ -73,7 +66,7 @@ module Dugout
         #
         # @return [Class] the compiled op's class
         def op_class
-          @op_class ||= expression_language_location.const_set(ast.name, Class.new {})
+          @op_class ||= expression_language_location.const_set(name, Class.new {})
         end
 
         ##
@@ -84,13 +77,13 @@ module Dugout
           if binary_op? && infix?
             # if binop, define on operator module so that everybody responds to
             # it.
-            expression_evaluator_location::InfixOperators.send(:define_method, ast.operator_name) do |*args|
+            expression_evaluator_location::InfixOperators.send(:define_method, operator) do |*args|
               klass.new(self, *args)
             end
           else
             # otherwise, just define it on the expression namespace proper so
             # it's a first-class function
-            expression_evaluator_location.define_singleton_method(ast.operator_name) do |*args|
+            expression_evaluator_location.define_singleton_method(operator) do |*args|
               klass.new(*args)
             end
           end
