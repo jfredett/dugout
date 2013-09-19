@@ -32,14 +32,6 @@ module Dugout
         end
 
         ##
-        # Custom iterator for dealing with attributes
-        def each_attribute_by_name
-          Array(attributes).each do |attr|
-            yield attr.name, attr if block_given?
-          end
-        end
-
-        ##
         # Cause the Operator class to be defined in Dugout::Math::Model
         def run!
           define_initializer!
