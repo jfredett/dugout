@@ -55,11 +55,8 @@ module Dugout
         #
         # @return [Proc] a proc to be used as a display function
         def display_function
-          if df = ast.children[Parser::DisplayFunction]
-            df.block
-          else
-            default_display_function
-          end
+          return default_display_function unless df = ast.children[Parser::DisplayFunction]
+          df.block
         end
 
         private
