@@ -40,19 +40,6 @@ module Dugout
         end
 
         ##
-        # Lazily initializes the operator class in the given location
-        #
-        # @return [Class] the compiled op's class
-        def op_class
-          return @op_class if defined?(@op_class)
-          infix_operators = expression_evaluator_location::InfixOperators
-          @op_class = location.const_set(
-            ast.name,
-            Class.new { include infix_operators }
-          )
-        end
-
-        ##
         # Cause the Operator class to be defined in Dugout::Math::Model
         def run!
           define_initializer!
@@ -84,6 +71,19 @@ module Dugout
         end
 
         private
+
+        ##
+        # Lazily initializes the operator class in the given location
+        #
+        # @return [Class] the compiled op's class
+        def op_class
+          return @op_class if defined?(@op_class)
+          infix_operators = expression_evaluator_location::InfixOperators
+          @op_class = location.const_set(
+            ast.name,
+            Class.new { include infix_operators }
+          )
+        end
 
         ##
         # Defines an approriate method in the expression evaluator for this Op
