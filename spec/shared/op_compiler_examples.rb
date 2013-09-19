@@ -48,7 +48,6 @@ shared_examples_for 'an op compiler for a' do |op_class|
       it_behaves_like 'a generated class'
     end
 
-
     describe 'a unary op without a defined display function' do
       # we need to override these to known values
       let(:attributes) { [:only] }
@@ -152,7 +151,7 @@ shared_examples_for 'a generated class' do
 
       specify { expect { example_op_class.new(*attributes) }.to_not raise_error }
 
-      specify { expect { example_op_class.new(*attributes.drop(1) ) }.to raise_error ArgumentError }
+      specify { expect { example_op_class.new(*attributes.drop(1)) }.to raise_error ArgumentError }
 
       specify { expect { example_op_class.new(*attributes.push(nil)) }.to raise_error ArgumentError }
     end

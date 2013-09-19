@@ -10,10 +10,9 @@ module Dugout
     end
 
     module Model
-      def self.model(name = nil, opts={}, &block)
+      def self.model(name = nil, opts = {}, &block)
         Parser::Model.new(name, opts.merge(parent: nil), &block)
       end
     end
   end
 end
-

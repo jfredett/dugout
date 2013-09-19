@@ -9,7 +9,7 @@ module Dugout
 
         # the operator to use when using the fancyparser (the thing that converts from
         # 'a + b * c ** 2' => \
-        # 
+        #
         # Addition.new(
         #   Variable.new(:a),
         #   Multiplication.new(
@@ -51,4 +51,3 @@ module Dugout
     end
   end
 end
-

@@ -130,13 +130,13 @@ module Dugout
         def default_display_function
           _attributes = attributes
           if binary_op? && infix?
-            lambda {
+            lambda do
               "(#{_attributes.map { |i| send(i.name).to_s }.join(" #{operator} ")})"
-            }
+            end
           else
-            lambda {
+            lambda do
               "#{operator}(#{_attributes.map { |i| send(i.name).to_s }.join(',')})"
-            }
+            end
           end
         end
 
@@ -152,7 +152,9 @@ module Dugout
         def define_initializer!
           define! do |compiler|
             define_method(:initialize) do |*args|
-              raise ArgumentError, "incorrect number of arguments, #{args.length} for #{compiler.arity}" unless args.length == compiler.arity
+              if args.length != compiler.arity
+                raise ArgumentError, "incorrect number of arguments, #{args.length} for #{compiler.arity}"
+              end
               args.zip(compiler.attributes).each do |arg, attr|
                 instance_variable_set("@#{attr.name}", arg)
               end

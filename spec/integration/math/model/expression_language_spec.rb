@@ -20,7 +20,6 @@ describe Dugout::Math::Model::Expression::Language do
       its(:constants) { should =~ Dugout::Math::Model.ops.map(&:name) }
       specify { expression_evaluator.constants.should include :InfixOperators }
 
-
       describe 'running #clean after compilation' do
         it 'deletes all the language constants' do
           reifier.clean!
@@ -30,38 +29,38 @@ describe Dugout::Math::Model::Expression::Language do
 
       describe 'ast equality' do
         let(:e) { expression_language } # for convenience below
-        let(:ast) {
+        let(:ast) do
           e::Log.new(
             e::Addition.new(
               e::Variable.new(:x),
               e::Literal.new(10)
             )
           )
-        }
-        let(:equal_ast) {
+        end
+        let(:equal_ast) do
           e::Log.new(
             e::Addition.new(
               e::Variable.new(:x),
               e::Literal.new(10)
             )
           )
-        }
-        let(:equivalent_nonequal_ast) {
+        end
+        let(:equivalent_nonequal_ast) do
           e::Log.new(
             e::Addition.new(
               e::Literal.new(10),
               e::Variable.new(:x)
             )
           )
-        }
-        let(:completely_different_ast) {
+        end
+        let(:completely_different_ast) do
           e::Exponential.new(
             e::Subtraction.new(
               e::Variable.new(:i),
               e::Literal.new(1129310)
             )
           )
-        }
+        end
 
         specify { ast.should == ast }
         specify { ast.should == equal_ast }

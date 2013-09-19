@@ -8,7 +8,7 @@ describe Dugout::Math::Model::Expression::Evaluator do
   subject(:exp_eval) { expression_namespace::Evaluator }
 
   def operator_for(klass)
-    if op = Dugout::Math::Model.ops.detect { |op| op.name == klass }
+    if op = Dugout::Math::Model.ops.find { |o| o.name == klass }
       op.operator_name
     else
       raise "No Operator for #{klass}"
@@ -96,7 +96,7 @@ describe Dugout::Math::Model::Expression::Evaluator do
     describe 'evaluating an expression' do
       let(:e) { expression_language }
       subject(:expression) { expression_namespace.define { log(lit(10) * var(:x) - lit(3)) } }
-      let(:expected_parse_tree) {
+      let(:expected_parse_tree) do
         e::Log.new(
           e::Subtraction.new(
             e::Multiplication.new(
@@ -106,10 +106,9 @@ describe Dugout::Math::Model::Expression::Evaluator do
             e::Literal.new(3)
           )
         )
-      }
+      end
 
       specify { expression.should == expected_parse_tree }
     end
   end
 end
-

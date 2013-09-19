@@ -9,4 +9,3 @@ module Dugout
     end
   end
 end
-

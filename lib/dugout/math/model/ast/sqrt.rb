@@ -9,7 +9,7 @@ module Dugout
           operator 'root'
 
           implementation do
-            radicand ** (lit(1) / lit(2))
+            radicand**(lit(1) / lit(2))
           end
         end
       end
