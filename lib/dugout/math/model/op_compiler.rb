@@ -86,13 +86,13 @@ module Dugout
         #
         # @return [Class] the compiled op's class
         def op_class
-          @op_class ||= location.const_set(ast.name, Class.new {})
+          @op_class ||= expression_language_location.const_set(ast.name, Class.new {})
         end
 
         ##
         # Defines an approriate method in the expression evaluator for this Op
         def define_expression_evaluator_method!
-          klass = location.const_get(name)
+          klass = expression_language_location.const_get(name)
 
           if binary_op? && infix?
             # if binop, define on operator module so that everybody responds to
@@ -121,7 +121,6 @@ module Dugout
         def expression_language_location
           @expression_language_loc || Dugout::Math::Model::Expression::Language
         end
-        alias location expression_language_location
 
         ##
         # The Location to define evaluator methods on.
