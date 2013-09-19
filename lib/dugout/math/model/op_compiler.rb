@@ -44,7 +44,6 @@ module Dugout
         def run!
           define_initializer!
           include_infix_operators!
-          define_attribute_getters!
           define_operator!
           define_display_functions!
           define_expression_evaluator_method!
@@ -166,16 +165,6 @@ module Dugout
           define! do |compiler|
             define_method(:operator) do |*args|
               compiler.operator
-            end
-          end
-        end
-
-        ##
-        # Define each attribute's getter on the compiled op's class
-        def define_attribute_getters!
-          define! do |compiler|
-            compiler.each_attribute_by_name do |name|
-              define_method(name) { instance_variable_get("@#{name}") }
             end
           end
         end
