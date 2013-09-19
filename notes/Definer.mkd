@@ -1,0 +1,22 @@
+# Definer
+
+The Definer should accept equations like:
+
+    Expression::Evaluator.define { 2*x + 2 }
+
+rather than
+
+    Expression::Evaluator.define { lit(2)*var(:x) + lit(2) }
+
+## How
+
+ops should be allowed to define a `evaluator_hack` block they can define which
+simply gets run on the evaluator, and an `infix_operator_hack` block that does
+the same on the `InfixOperator` module.
+
+The Variable can probably get away by just defining `method_missing` on
+Evaluator, supering out if it recognizes the method, and otherwise returning
+`var(method)`.
+
+The Literal can probably just get away by hacking method missing and checking
+the args for Fixnums or Rationals or w/e, and wrapping them and supering up.
