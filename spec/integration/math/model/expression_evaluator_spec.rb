@@ -33,6 +33,7 @@ describe Dugout::Math::Model::Expression::Evaluator do
       it { should_not respond_to operator_for(:Subtraction)    }
       it { should_not respond_to operator_for(:Power)          }
       it { should_not respond_to operator_for(:Sqrt)           }
+      it { should_not respond_to operator_for(:Derivative)  }
     end
   end
 
@@ -55,19 +56,21 @@ describe Dugout::Math::Model::Expression::Evaluator do
     describe 'expression evaluator' do
       subject { exp_eval }
 
-      it { should respond_to operator_for(:Variable)       }
-      it { should respond_to operator_for(:Literal)        }
-      it { should respond_to operator_for(:Exponential)    }
-      it { should respond_to operator_for(:Log)            }
-      it { should respond_to operator_for(:Power)          }
-      it { should respond_to operator_for(:Sqrt)           }
+      it { should respond_to operator_for(:Variable)    }
+      it { should respond_to operator_for(:Literal)     }
+      it { should respond_to operator_for(:Exponential) }
+      it { should respond_to operator_for(:Log)         }
+      it { should respond_to operator_for(:Power)       }
+      it { should respond_to operator_for(:Sqrt)        }
+      it { should respond_to operator_for(:Derivative)  }
 
-      it { expression_language::Literal.ancestors.should include exp_eval::InfixOperators        }
-      it { expression_language::Exponential.ancestors.should include exp_eval::InfixOperators    }
-      it { expression_language::Log.ancestors.should include exp_eval::InfixOperators            }
-      it { expression_language::Subtraction.ancestors.should include exp_eval::InfixOperators    }
-      it { expression_language::Power.ancestors.should include exp_eval::InfixOperators          }
-      it { expression_language::Sqrt.ancestors.should include exp_eval::InfixOperators           }
+      it { expression_language::Literal.ancestors.should include exp_eval::InfixOperators     }
+      it { expression_language::Exponential.ancestors.should include exp_eval::InfixOperators }
+      it { expression_language::Log.ancestors.should include exp_eval::InfixOperators         }
+      it { expression_language::Subtraction.ancestors.should include exp_eval::InfixOperators }
+      it { expression_language::Power.ancestors.should include exp_eval::InfixOperators       }
+      it { expression_language::Sqrt.ancestors.should include exp_eval::InfixOperators        }
+      it { expression_language::Derivative.ancestors.should include exp_eval::InfixOperators  }
     end
 
     describe 'after cleaning, no operators remain defined' do
@@ -84,12 +87,13 @@ describe Dugout::Math::Model::Expression::Evaluator do
       describe 'expression evaluator' do
         subject { exp_eval }
 
-        it { should_not respond_to operator_for(:Literal)        }
-        it { should_not respond_to operator_for(:Exponential)    }
-        it { should_not respond_to operator_for(:Log)            }
-        it { should_not respond_to operator_for(:Subtraction)    }
-        it { should_not respond_to operator_for(:Power)          }
-        it { should_not respond_to operator_for(:Sqrt)           }
+        it { should_not respond_to operator_for(:Literal)     }
+        it { should_not respond_to operator_for(:Exponential) }
+        it { should_not respond_to operator_for(:Log)         }
+        it { should_not respond_to operator_for(:Subtraction) }
+        it { should_not respond_to operator_for(:Power)       }
+        it { should_not respond_to operator_for(:Sqrt)        }
+        it { should_not respond_to operator_for(:Derivative)  }
       end
     end
 
