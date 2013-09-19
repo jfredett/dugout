@@ -43,6 +43,7 @@ module Dugout
         # Cause the Operator class to be defined in Dugout::Math::Model
         def run!
           define_initializer!
+          include_infix_operators!
           define_attribute_getters!
           define_operator!
           define_display_functions!
@@ -73,16 +74,19 @@ module Dugout
         private
 
         ##
+        # Include the InfixOperators module, so the defined op class responds to
+        # all the infix operators
+        def include_infix_operators!
+          infix_operators = expression_evaluator_location::InfixOperators
+          define! { |compiler| include infix_operators }
+        end
+
+        ##
         # Lazily initializes the operator class in the given location
         #
         # @return [Class] the compiled op's class
         def op_class
-          return @op_class if defined?(@op_class)
-          infix_operators = expression_evaluator_location::InfixOperators
-          @op_class = location.const_set(
-            ast.name,
-            Class.new { include infix_operators }
-          )
+          @op_class ||= location.const_set(ast.name, Class.new {})
         end
 
         ##
