@@ -99,16 +99,20 @@ describe Dugout::Math::Model::Expression::Evaluator do
 
     describe 'evaluating an expression' do
       let(:e) { expression_language }
-      subject(:expression) { expression_namespace.define { log(lit(10) * x - lit(3)) } }
+      subject(:expression) { expression_namespace.define { D(log(lit(10) * x - lit(3)), x) } }
+
       let(:expected_parse_tree) do
-        e::Log.new(
-          e::Subtraction.new(
-            e::Multiplication.new(
-              e::Literal.new(10),
-              e::Variable.new(:x)
-            ),
-            e::Literal.new(3)
-          )
+        e::Derivative.new(
+          e::Log.new(
+            e::Subtraction.new(
+              e::Multiplication.new(
+                e::Literal.new(10),
+                e::Variable.new(:x)
+              ),
+              e::Literal.new(3)
+            )
+          ),
+          e::Variable.new(:x)
         )
       end
 
