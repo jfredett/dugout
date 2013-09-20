@@ -20,3 +20,33 @@ Evaluator, supering out if it recognizes the method, and otherwise returning
 
 The Literal can probably just get away by hacking method missing and checking
 the args for Fixnums or Rationals or w/e, and wrapping them and supering up.
+
+## Alternately
+
+Just hardcode this shit in, damn the torpedoes. This is specialist behavior that
+probably will never change, and you can always upfactor it later.
+
+
+------
+
+## Post implementation notes:
+
+Well, the `method_missing` hack worked fine, but the fixnum coercion didn't.
+
+Basically the problem is with how ruby parses expressions like `10*x` versus
+`x*10`, in particular, `x*y == x.*(y)`, which means the receiver is always the
+left side, since `10` isn't a method call on the context, I can't capture it as
+a self-method on the evaluator. Since I don't want to use refinements (for
+performance as well as compatibility reasons) and I don't want to hack Fixnum
+(since I don't know how that will effect client code), I'm stuck with two
+remaining options.
+
+1. Dealing with it.
+2. Using a ruby parser to convert the AST to the appropriate format.
+
+Unfortunately the latter requires some building up some infrastructure for
+walking the AST. I also need to advertise that I'm doing this, fortunately it's
+pretty isolated to that one proc, and the `unparser` gem from whitequark
+*should* allow it to work cleanly. Since I don't expect there to be too many
+literals in the equations, I'm going to go with `1` for now, but hopefully I can
+eventually make `2` work.

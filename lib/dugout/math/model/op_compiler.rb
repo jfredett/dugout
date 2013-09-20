@@ -43,6 +43,7 @@ module Dugout
           define_operator!
           define_display_functions!
           define_expression_evaluator_method!
+          define_variable_coercion_method!
         end
 
         ##
@@ -56,6 +57,13 @@ module Dugout
         end
 
         private
+
+        def define_variable_coercion_method!
+          expression_evaluator_location.define_singleton_method(:method_missing) do |method, *args, &block|
+            return super if method == :respond_to? or respond_to? method
+            var(method)
+          end
+        end
 
         ##
         # Include the InfixOperators module, so the defined op class responds to
