@@ -42,6 +42,7 @@ module Dugout
           include_infix_operators!
           define_operator!
           define_display_functions!
+          define_name!
           define_expression_evaluator_method!
           define_variable_coercion_method!
         end
@@ -79,6 +80,16 @@ module Dugout
         # @return [Class] the compiled op's class
         def op_class
           @op_class ||= expression_language_location.const_set(name, Class.new {})
+        end
+
+        ##
+        # Define the #name method on the operator class
+        #
+        # TODO: Write some tests for this.
+        def define_name!
+          define! do |compiler|
+            define_method(:name) { compiler.name.downcase }
+          end
         end
 
         ##

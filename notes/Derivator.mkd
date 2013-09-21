@@ -43,10 +43,11 @@ increase tension (ie, expand) or decrease it. It might look like:
       type :simplification
 
       match do
-        any(Literal) + any(Literal)
+        any(Literal) + any(Literal) # any, with an argument or arguments, means
+                                    # 'anything which is one of these classes'
       end
 
-      output do |x,y| #block arity must match how many any calls were made.
+      output do |x,y| #block arity must match how many `any` calls were made.
         Literal(x.value + y.value)
       end
     end
@@ -101,3 +102,63 @@ You might even keep a cache of 'good' simplification functions you check first,
 and if any give you a good reduction, never bother to check the field (which for
 reasonably `k` would get large -- `O(|S|^k)` large -- where `|S|` is the number
 of simplifier/expanders you have.
+
+---------
+
+# Implementation details
+
+First we need a `define_pattern` definer as well as a `define_equation` definer.
+The former allows you to use the `any` construct, which is a wildcard with some
+type constraint ability.
+
+We then define `=~` on the AST classes that compare a pattern w/ the ast and
+check to see if it matches. It should return a list of the ASTs which match, or
+nil if none do.
+
+Now we need to be able to replace those ASTs with the output that is
+simpler/more complicate (depending on the particular rewrite rule that is
+defined).
+
+This gets a bit tricky, really we need to know the parent, and replace the
+particular attribute with the simpler version. Since the match clauses in the
+rewrite rules are written from the perspective of the thing-to-be-simplified,
+and not the parent, we need to either doubly-link the list, or we need to alter
+`=~` to provide us the context.
+
+To get around this, we can instead do the following, described recursively, and
+indeed no AST should be so deep that it would blow the stack, so it could
+probably be implemented recursively too.
+
+
+    def visit(ast)
+      matchers.each do |matcher|
+        return visit(matcher.output_for(ast)) if ast =~ matcher
+      end
+      return ast.class.new(*ast.leaves.map { |leaf| visit(leaf) })
+    end
+
+The final return could be written to not re-allocate if performance dictates,
+and indeed this could be shoved into the class definition for each operation.
+
+We can also potentially optimize by classifying simplifications by their primary
+function. So that instead of iterating over every matcher, we iterate over each
+one that matches the class of the ast we're iterating on.
+
+Note that the we visit the output of the matcher. Certain high-level re-write
+rules might move chunks of the tree around without fully simplifying the
+subtree, this ensures we simplify the whole subtree on each pass.
+
+As noted above, we may need to iterate this many times to get the simplest
+equation.
+
+Another important fact is that sometimes we match against _specific instances_
+of classes. Like when we match `lit(0) * any`. Essentially `=~` is a weakened
+`==` where it acts as a normal `==`, but with the following caveats:
+
+
+1. `any(klasses)` matches any instance of the specified classes.
+2. variables match even if their names don't match, so long as they match
+   consistently. That is, `x * y` should match `a * b`, whereas it clearly
+   doesn't equal each other. But `x * y` should _not_ match `a * a`, because
+   it is implied that `x /= y`.
+
